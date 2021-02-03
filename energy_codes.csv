@@ -1,0 +1,71 @@
+Energy_code,Energy_name
+AB,Aviation gasoline blending components
+AR,Asphalt and road oil
+AV,Aviation gasoline
+BD,Biodiesel
+BF,Biofuels
+BM,Biomass
+BQ,Normal butane
+NU,Nuclear electric power
+CC,Coal coke
+CL,Coal
+PA,All petroleum products
+DF,Distillate fuel oil
+EM,Fuel ethanol excluding denaturant
+EN,Fuel ethanol including denaturant
+ES,Electricity sales
+GE,Geothermal energy
+HL,Hydrocarbon gas liquids
+HY,Hydroelectric power
+JF,Jet fuel
+KS,Kerosene
+LU,Lubricants
+MG,Motor gasoline
+NG,Natural gas (including supplemental gaseous fuels)
+PC,Petroleum coke
+OP,Other petroleum products subtotal
+RF,Residual fuel oil
+SO,Solar
+TE,Total
+WD,Wood
+WW,Wood and biomass waste
+WY,Wind energy
+BY,Butylene from refineries
+CO,Crude oil
+DM,Distillate fuel oil - excluding biodiesel
+EL,Electricity
+EQ,Ethane
+EY,Ethylene from refineries
+FF,Fossil fuels
+FN,Petrochemical feedstocks - naphtha less than 401 degrees F
+FO,Petrochemical feedstocks - other oils equal to or greater than 401 degrees F
+FS,Petrochemical feedstocks - still gas
+GD,Gross domestic product
+IQ,Isobutane
+IY,Isobutylene from refineries
+LO,Electrical system energy losses
+MB,Motor gasoline blending components
+MM,Motor gasoline excluding fuel ethanol
+MS,Miscellaneous petroleum products
+NA,Natural gasoline
+NC,Noncombustible renewable energy
+NN,Natural gas (excluding supplemental gaseous fuels)
+OH,Other hydrocarbon gas liquids (other than propane)
+PE,Primary energy
+PL,Plant condensate
+PM,All petroleum products - excluding biofuels
+PP,Natural gasoline (pentanes plus)
+PQ,Propane
+PY,Propylene from refineries
+RE,Renewable energy
+SF,Supplemental gaseous fuels
+SG,Still gas
+SN,Special naphthas
+UO,Unfinished oils
+US,Unfractionated streams
+WS,Waste
+WX,Waxes
+TN,Total net energy consumption
+NA,Natural gasoline
+TP,Resident population including Armed Forces
+P1,"Asphalt and road oil, kerosene, lubricants, petroleum coke, and ""other petroleum products"""

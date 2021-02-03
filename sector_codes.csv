@@ -1,0 +1,25 @@
+Sector_code,Sector_name
+AC,Transportation
+CC,Commercial
+EI,Electric power (fuel consumption)
+EG,Electric power (net generation)
+ET,Total net generation
+EX,Exports
+IC,Industrial
+IM,Imports
+RC,Residential
+TC,Total
+AP,Consumption per capita in the transportation sector
+IP,Consumption per capita in the industrial sector
+CP,Consumption per capita in the commercial sector
+IS,"Industrial sector, adjusted for process fuel, intermediate products, and fuels with no direct cost"
+KC,Consumed at coke plants (coking coal)
+LC,Energy losses and co-products from production
+NI,Net imports expenditures
+OC,Consumed by industrial users other than coke plants
+PR,Production
+RP,"Consumed by (i.e., sold to) the residential sector per capita"
+TG,Total net generation
+TP,Total consumption per capita
+TX,Total end-use
+IN,Industrial
