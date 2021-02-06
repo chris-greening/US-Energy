@@ -1,4 +1,5 @@
 import csv
+import datetime
 
 import pandas as pd
 
@@ -52,7 +53,7 @@ def load_dataset():
     energy_codes_map = map_from_csv(r"data\energy_codes.csv")
     sector_codes_map = map_from_csv(r"data\sector_codes.csv")
     unit_codes_map = map_from_csv(r"data\unit_codes.csv")
-    state_color_map = map_from_csv(r"data\state_plot_colors.csv")
+    # state_color_map = map_from_csv(r"data\state_plot_colors.csv")
 
     df = create_code_columns(df)
     df.loc[df["Sector_code"] == "ET", "Sector_code"] = "TC"
@@ -88,6 +89,29 @@ def load_dataset():
                         "Energy_code", "Sector_code", "Unit_code"])
 
     id_vars = ["State", "Source", "Sector", "Unit"]
-
     df = df.melt(id_vars=id_vars, var_name="Year", value_name="BTU")
+
+    df["Year"] = df["Year"].astype(int)
+
+    return df
+
+def load_primary_energy_sources(df):
+    df = data_subset(
+            df,
+            sources=[
+                "Renewable energy",
+                "Natural gas (excluding supplemental gaseous fuels)",
+                "Coal", "Nuclear electric power",
+                "All petroleum products - excluding biofuels"
+            ]
+    )
+    df["Source"] = df["Source"].replace(
+        {
+            "Renewable energy": "Renewables",
+            "Natural gas (excluding supplemental gaseous fuels)": "Natural gas",
+            "Nuclear electric power": "Nuclear",
+            "All petroleum products - excluding biofuels": "Petroleum"
+        },
+        regex = False
+    )
     return df
