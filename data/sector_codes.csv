@@ -18,8 +18,9 @@ LC,Energy losses and co-products from production
 NI,Net imports expenditures
 OC,Consumed by industrial users other than coke plants
 PR,Production
-RP,"Consumed by (i.e., sold to) the residential sector per capita"
+RP,Consumption per capita in the residential sector
 TG,Total net generation
 TP,Total consumption per capita
 TX,Total end-use
 IN,Industrial
+OP,Resident population of armed forces
