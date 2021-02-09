@@ -1,6 +1,12 @@
 .dash {
   max-width: 1300px;
   background-color: #F2F8FF;
+  /* background-image: url("us.png"); */
+  /* background-repeat: no-repeat; */
+  /* background-attachment: fixed; */
+  /* background-position: center; */
+  /* background-size: 25%; */
+  /* height: 2000px; */
 }
 
 /* #region-info {
@@ -10,6 +16,7 @@
 body {
   background-color: #F2F8FF;
   margin-bottom: 10%;
+
 }
 
 input[type="radio"] {
@@ -74,6 +81,12 @@ hr {
   /* height: 400px; */
   height: 50vw;
   max-height: 400px;
+
+  animation: fadeIn ease 2s;
+  -webkit-animation: fadeIn ease 2s;
+  -moz-animation: fadeIn ease 2s;
+  -o-animation: fadeIn ease 2s;
+  -ms-animation: fadeIn ease 2s;
 }
 
 /* Small screen header */
@@ -88,7 +101,36 @@ hr {
   }
 
   .plot {
-    padding: 15px 10px 10px 15px;
+    padding: 15px 15px 15px 15px;
   }
 
+}
+
+@keyframes fadeIn {
+  0% {opacity:0;}
+  100% {opacity:1;}
+}
+
+@-moz-keyframes fadeIn {
+  0% {opacity:0;}
+  100% {opacity:1;}
+}
+
+@-webkit-keyframes fadeIn {
+  0% {opacity:0;}
+  100% {opacity:1;}
+}
+
+@-o-keyframes fadeIn {
+  0% {opacity:0;}
+  100% {opacity:1;}
+}
+
+@-ms-keyframes fadeIn {
+  0% {opacity:0;}
+  100% {opacity:1;}
+}
+
+.row {
+  background-color: #F2F8FF;
 }
