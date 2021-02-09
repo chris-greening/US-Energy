@@ -76,8 +76,16 @@ def us_total(total_df, primary_df):
     )
     fig.update_layout(plotting.PLOT_COLORS)
     return fig
-    
+
     # return per_cap_df, consumption_df
+
+def us_total_stacked_area(primary_df):
+    consumption_df = dp.data_subset(primary_df, states=["United States"], sectors=["Total"])
+    consumption_df = consumption_df.groupby(["Year", "Source"], as_index=False).sum()
+    consumption_df = consumption_df.rename(columns={"BTU": "Quadrillion BTU"})
+    fig = px.area(consumption_df, x="Year", y="Quadrillion BTU", color="Source",
+                  color_discrete_map=plotting.ENERGY_SOURCE_COLORS)
+    return fig
 
 def us_primary_per_year(primary_df):
     consumption_df = dp.data_subset(primary_df, states=["United States"], sectors=["Total"])
