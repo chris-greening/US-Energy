@@ -82,9 +82,13 @@ def us_total(total_df, primary_df):
 def us_total_stacked_area(primary_df):
     consumption_df = dp.data_subset(primary_df, states=["United States"], sectors=["Total"])
     consumption_df = consumption_df.groupby(["Year", "Source"], as_index=False).sum()
+    consumption_df["BTU"] = consumption_df["BTU"]/1_000_000
+
     consumption_df = consumption_df.rename(columns={"BTU": "Quadrillion BTU"})
     fig = px.area(consumption_df, x="Year", y="Quadrillion BTU", color="Source",
                   color_discrete_map=plotting.ENERGY_SOURCE_COLORS)
+    fig.update_layout(plotting.PLOT_COLORS)
+
     return fig
 
 def us_primary_per_year(primary_df):
@@ -109,5 +113,26 @@ def us_primary_per_year(primary_df):
         )
         fig.update_layout(plotting.PLOT_COLORS)
         fig.update_xaxes(title_text="", categoryorder="total ascending")
+        figs[year] = fig
+    return figs
+
+def us_primary_per_year_pie(primary_df):
+    consumption_df = dp.data_subset(
+        primary_df, states=["United States"], sectors=["Total"])
+    consumption_df = consumption_df.groupby(
+        ["Year", "Sector", "Source"], as_index=False).sum()
+    consumption_df["BTU"] = consumption_df["BTU"]/1_000_000
+    consumption_df = consumption_df.rename(columns={"BTU": "Quadrillion BTU"})
+
+    figs = {}
+    for year in consumption_df["Year"].unique():
+        fig = px.pie(
+            consumption_df[consumption_df["Year"] == year],
+            values="Quadrillion BTU",
+            names="Source",
+            color="Source",
+            color_discrete_map=plotting.ENERGY_SOURCE_COLORS
+        )
+        fig.update_layout(plotting.PLOT_COLORS)
         figs[year] = fig
     return figs
