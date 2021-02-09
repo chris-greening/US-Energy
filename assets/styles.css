@@ -1,5 +1,5 @@
 .dash {
-  max-width: 1500px;
+  max-width: 1300px;
   background-color: #F2F8FF;
 }
 
@@ -70,6 +70,25 @@ hr {
   margin: 22px 10px;
   border: 1px solid black;
   background-color: #fffffa;
-  padding: 15px 10px 10px 15px;
-  height: 450px;
+  padding: 5px 5px 5px 5px;
+  /* height: 400px; */
+  height: 50vw;
+  max-height: 400px;
+}
+
+/* Small screen header */
+.plot-header {
+  font-size: 1.0rem;
+}
+
+/* Full screen header */
+@media only screen and (min-width: 576px) {
+  .plot-header {
+    font-size: 1.3rem;
+  }
+
+  .plot {
+    padding: 15px 10px 10px 15px;
+  }
+
 }
