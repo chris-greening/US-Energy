@@ -42,7 +42,10 @@ app.layout = html.Div(children = [
                     html.Div(
                         html.Div(
                             children=[
-                                html.H3("Energy consumption"),
+                                html.H3(
+                                    "Total energy consumption",
+                                    className="plot-header"
+                                ),
                                 dcc.Graph(
                                     id="us-total",
                                     figure=pc.us_total(df, primary_energy_df),
@@ -57,7 +60,10 @@ app.layout = html.Div(children = [
                     html.Div(
                         html.Div(
                             children=[
-                                html.H3(id="us-primary-header"),
+                                html.H3(
+                                    id="us-primary-header",
+                                    className="plot-header"
+                                ),
                                 dcc.Graph(
                                     id="us-primary-bar",
                                     style={"height": plotting.PLOT_HEIGHT}
@@ -67,6 +73,29 @@ app.layout = html.Div(children = [
                         ),
                         className="col-xl-4"
                     )
+                ],
+                className="row"
+            ),
+            html.Div(
+                children = [
+                    html.Div(
+                        html.Div(
+                            children=[
+                                html.H3(
+                                    "Energy consumption per resource",
+                                    className="plot-header"
+                                ),
+                                dcc.Graph(
+                                    id="us-total-stacked-area",
+                                    figure=pc.us_total_stacked_area(
+                                        primary_energy_df),
+                                    style={"height": plotting.PLOT_HEIGHT}
+                                )
+                            ],
+                            className="plot"
+                        ),
+                        className="col-xl-12"
+                    ),
                 ],
                 className="row"
             )
@@ -83,7 +112,7 @@ app.layout = html.Div(children = [
 )
 def us_primary_bar(hoverData):
     year_value = int(hoverData['points'][0]['x'][:4])
-    return f"Energy consumption ({year_value})"
+    return f"Total energy consumption ({year_value})"
 
 ########## BAR PLOT
 
