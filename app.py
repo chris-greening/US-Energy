@@ -23,6 +23,7 @@ primary_energy_df = dp.load_primary_energy_sources(df)
 
 # Precomputed figures
 us_primary_bar_dict = pc.us_primary_per_year(primary_energy_df)
+us_primary_pie_dict = pc.us_primary_per_year_pie(primary_energy_df)
 
 external_stylesheets = ['https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css']
 
@@ -82,19 +83,37 @@ app.layout = html.Div(children = [
                         html.Div(
                             children=[
                                 html.H3(
-                                    "Energy consumption per resource",
+                                    "Resource usage",
                                     className="plot-header"
                                 ),
                                 dcc.Graph(
                                     id="us-total-stacked-area",
                                     figure=pc.us_total_stacked_area(
                                         primary_energy_df),
+                                    style={"height": plotting.PLOT_HEIGHT},
+                                    hoverData={"points": [
+                                        {"x": 2018}]},
+                                )
+                            ],
+                            className="plot"
+                        ),
+                        className="col-xl-8 order-xl-12"
+                    ),
+                    html.Div(
+                        html.Div(
+                            children=[
+                                html.H3(
+                                    id="us-primary-pie-header",
+                                    className="plot-header"
+                                ),
+                                dcc.Graph(
+                                    id="us-primary-pie",
                                     style={"height": plotting.PLOT_HEIGHT}
                                 )
                             ],
                             className="plot"
                         ),
-                        className="col-xl-12"
+                        className="col-xl-4 order-xl-1"
                     ),
                 ],
                 className="row"
@@ -107,10 +126,19 @@ app.layout = html.Div(children = [
 
 ########## HEADERS
 @app.callback(
+    Output('us-primary-pie-header', 'children'),
+    Input('us-total-stacked-area', 'hoverData')
+)
+def us_primary_pie_header(hoverData):
+    year_value = int(hoverData['points'][0]['x'])
+    return f"Resource usage ({year_value})"
+
+
+@app.callback(
     Output('us-primary-header', 'children'),
     Input('us-total', 'hoverData')
 )
-def us_primary_bar(hoverData):
+def us_primary_bar_header(hoverData):
     year_value = int(hoverData['points'][0]['x'][:4])
     return f"Total energy consumption ({year_value})"
 
@@ -124,6 +152,16 @@ def us_primary_bar(hoverData):
     year_value = int(hoverData['points'][0]['x'][:4])
     fig = us_primary_bar_dict[year_value]
     return fig
+
+@app.callback(
+    Output('us-primary-pie', 'figure'),
+    Input('us-total-stacked-area', 'hoverData')
+)
+def us_primary_pie(hoverData):
+    year_value = int(hoverData['points'][0]['x'])
+    fig = us_primary_pie_dict[year_value]
+    return fig
+
 
 if __name__ == '__main__':
     app.run_server(debug=DEBUG)
