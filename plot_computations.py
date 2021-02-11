@@ -5,6 +5,7 @@ import plotly
 
 import data_processing as dp
 import plotting
+import presidents
 
 def precompute_main_plots(total_df, primary_df):
     depiction_types = ["Total", "Total (by resource)", "Resource"]
@@ -32,8 +33,10 @@ def us_total(total_df, primary_df, depiction_type, x_axis_type):
     marker_size = (per_cap_df["Million BTU"] /
                    per_cap_df["Million BTU"].max())**5
 
+
     if depiction_type == "Total":
         consumption_df = consumption_df.groupby(["Year"], as_index=False).sum()
+        min_x, max_x, min_y, max_y = calculate_bounds(consumption_df)
         fig = px.scatter(
             consumption_df,
             x="Year",
@@ -42,19 +45,36 @@ def us_total(total_df, primary_df, depiction_type, x_axis_type):
             color=per_cap_df["Million BTU"],
             color_continuous_scale=px.colors.diverging.RdYlGn[::-1],
             hover_name="Year",
-            range_x=[datetime.date(1960, 1, 1), datetime.date(2018, 1, 1)],
+            range_x=[min_x, max_x],
+            range_y=[min_y, max_y],
             # height=500,
             size_max=12
         )
     elif depiction_type == "Total (by resource)":
+        min_x, max_x, min_y, max_y = calculate_bounds(consumption_df)
         consumption_df = consumption_df.groupby(["Year", "Source"], as_index=False).sum()
-        fig = px.area(consumption_df, x="Year", y="Quadrillion BTU", color="Source",
-                  color_discrete_map=plotting.ENERGY_SOURCE_COLORS)
+        fig = px.area(
+            consumption_df,
+            x="Year",
+            y="Quadrillion BTU",
+            color="Source",
+            color_discrete_map=plotting.ENERGY_SOURCE_COLORS,
+            range_x=[min_x, max_x],
+            range_y=[min_y, max_y]
+        )
     else:
         consumption_df = consumption_df.groupby(
             ["Year", "Source"], as_index=False).sum()
-        fig = px.line(consumption_df, x="Year", y="Quadrillion BTU", color="Source",
-                      color_discrete_map=plotting.ENERGY_SOURCE_COLORS)
+        min_x, max_x, min_y, max_y = calculate_bounds(consumption_df)
+        fig = px.line(
+            consumption_df,
+            x="Year",
+            y="Quadrillion BTU",
+            color="Source",
+            color_discrete_map=plotting.ENERGY_SOURCE_COLORS,
+            range_x=[min_x, max_x],
+            range_y=[min_y, max_y]
+        )
 
     fig.update_layout(
         xaxis=dict(
@@ -98,80 +118,46 @@ def us_total(total_df, primary_df, depiction_type, x_axis_type):
         )
     )
     if x_axis_type == "President":
-        fig.add_vrect(
-            x0="1960-01-01", x1="1961-01-01",
-            fillcolor="#ffd1d1", opacity=0.5,
-            layer="below", line_width=.5,
-        ),
-        fig.add_vrect(
-            x0="1961-01-01", x1="1963-01-01",
-            fillcolor="#c2f0ff", opacity=0.5,
-            layer="below", line_width=.5,
-        ),
-        fig.add_vrect(
-            x0="1963-01-01", x1="1969-01-01",
-            fillcolor="#c2f0ff", opacity=0.5,
-            layer="below", line_width=.5,
-        ),
-        fig.add_vrect(
-            x0="1969-01-01", x1="1974-01-01",
-            fillcolor="#ffd1d1", opacity=0.5,
-            layer="below", line_width=.5,
-        ),
-        fig.add_vrect(
-            x0="1974-01-01", x1="1977-01-01",
-            fillcolor="#ffd1d1", opacity=0.5,
-            layer="below", line_width=.5,
-        ),
-        fig.add_vrect(
-            x0="1977-01-01", x1="1981-01-01",
-            fillcolor="#c2f0ff", opacity=0.5,
-            layer="below", line_width=.5,
-        ),
-        fig.add_vrect(
-            x0="1981-01-01", x1="1989-01-01",
-            fillcolor="#ffd1d1", opacity=0.5,
-            layer="below", line_width=.5,
-        ),
-        fig.add_vrect(
-            x0="1989-01-01", x1="1993-01-01",
-            fillcolor="#ffd1d1", opacity=0.5,
-            layer="below", line_width=.5,
-        ),
-        fig.add_vrect(
-            x0="1993-01-01", x1="2001-01-01",
-            fillcolor="#c2f0ff", opacity=0.5,
-            layer="below", line_width=.5,
-        )
-        fig.add_vrect(
-            x0="2001-01-01", x1="2009-01-01",
-            fillcolor="#ffd1d1", opacity=0.5,
-            layer="below", line_width=.5,
-        )
-        fig.add_vrect(
-            x0="2009-01-01", x1="2017-01-01",
-            fillcolor="#c2f0ff", opacity=0.5,
-            layer="below", line_width=.5,
-        )
-        fig.add_vrect(
-            x0="2017-01-01", x1="2018-01-01",
-            fillcolor="#ffd1d1", opacity=0.5,
-            layer="below", line_width=.5,
-        )
-
-        fig.update_xaxes(
-            ticktext=["John F. Kennedy", "Lyndon B. Johnson", "Richard Nixon", "Gerald Ford", "Jimmy Carter",
-                    "Ronald Reagan", "George H.W. Bush", "Bill Clinton", "George W. Bush", "Barack Obama", "Donald Trump", ],
-            tickvals=["1961-01-01", "1963-01-01", "1969-01-01", "1974-01-01", "1977-01-01",
-                    "1981-01-01", "1989-01-01", "1993-01-01", "2001-01-01", "2009-01-01", "2017-01-01"],
-        )
-        fig.update_xaxes(showgrid=False)
-        fig.update_yaxes(showgrid=False)
+        add_presidential_axes(fig)
 
     fig.update_layout(plotting.PLOT_COLORS)
     return fig
 
     # return per_cap_df, consumption_df
+
+def calculate_bounds(consumption_df):
+    min_x = datetime.date(1960, 1, 1)
+    min_y = consumption_df["Quadrillion BTU"].min()
+    min_y = min_y - min_y*.05
+
+    max_x = datetime.date(2018, 1, 1)
+    max_y = consumption_df["Quadrillion BTU"].max()
+    max_y = max_y + max_y*.05
+
+    return min_x, max_x, min_y, max_y
+
+def add_presidential_axes(fig) -> None:
+    fig.add_vrect(
+        x0="1960-01-01", x1="1961-01-01",
+        fillcolor=plotting.PRESIDENTIAL_PARTY_COLORS["Republican"], opacity=0.5,
+        layer="below", line_width=.5,
+    )
+
+    ticktext = []
+    tickvals = []
+    for president in presidents.presidents:
+        fig.add_vrect(
+            x0=president.start,
+            x1=president.end,
+            fillcolor=plotting.PRESIDENTIAL_PARTY_COLORS[president.party],
+            opacity=0.5,
+            layer="below",
+            line_width=0.5
+        )
+        ticktext.append(president.name)
+        tickvals.append(president.start)
+    fig.update_xaxes(showgrid=False, ticktext=ticktext, tickvals=tickvals)
+    fig.update_yaxes(showgrid=False)
 
 def us_primary_per_year(primary_df):
     consumption_df = dp.data_subset(primary_df, states=["United States"], sectors=["Total"])
