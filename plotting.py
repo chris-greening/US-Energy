@@ -18,6 +18,11 @@ CHOROPLETH_COLORS = {
     'paper_bgcolor': '#F2F8FF'
 }
 
+PRESIDENTIAL_PARTY_COLORS = {
+    "Republican": "#ffd1d1",
+    "Democrat": "#c2f0ff"
+}
+
 PLOT_HEIGHT="90%"
 
 places = ["United Kingdom", "Scotland", "Wales", "Northern Ireland", "East Midlands", "East Of England", "London", "North East", "North West", "South East", "South West", "West Midlands", "Yorkshire And The Humber"]
