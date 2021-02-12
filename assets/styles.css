@@ -74,15 +74,15 @@ hr {
 }
 
 .plot {
-  margin: 10px 11px;
+  margin: 6px 7px;
   border: 1px solid black;
   background-color: #fffffa;
   padding: 5px 5px 5px 5px;
   padding-left: 0px;
   padding-right: 0px;
   /* height: 400px; */
+  max-height: 380px;
   height: 50vw;
-  max-height: 400px;
 
   animation: fadeIn ease 2s;
   -webkit-animation: fadeIn ease 2s;
@@ -96,14 +96,37 @@ hr {
   font-size: 1.0rem;
 }
 
+.plot-type-dropdown {
+    width: 135px;
+    font-size: 12px;
+}
+
+#x-axis-labels {
+    width: 70px;
+    font-size: 12px;
+}
+
 /* Full screen header */
 @media only screen and (min-width: 576px) {
   .plot-header {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
+    padding-left: 15px;
+    width: 48%;
+    font-weight: 600;
   }
 
   .plot {
     padding: 15px 15px 15px 15px;
+  }
+
+  .plot-type-dropdown {
+    width: 275px;
+    font-size: 14px;
+  }
+
+  #x-axis-labels {
+    width: 125px;
+    font-size: 14px;
   }
 
 }
@@ -133,12 +156,12 @@ hr {
   100% {opacity:1;}
 }
 
-.col-xl-8, .col-xl-4 {
+.col-xl-9, .col-xl-4, .col-xl-12, .col-xl-3, .col-xl-6, .col-xl-8 {
   padding-left: 0px;
   padding-right: 0px;
 }
 
-.main-plot-header-col {
-  padding-left: 10px;
-  padding-right: 10px;
+#us-primary-header {
+  width: 100%;
+  padding-left: 0px;
 }
