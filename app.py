@@ -24,7 +24,8 @@ primary_energy_df = dp.load_primary_energy_sources(df)
 # Precomputed figures
 us_main_plot_dict = pc.precompute_main_plots(df, primary_energy_df)
 us_primary_bar_dict = pc.us_primary_per_year(primary_energy_df)
-us_primary_pie_dict = pc.us_primary_per_year_pie(primary_energy_df)
+# us_primary_pie_dict = pc.us_primary_per_year_pie(primary_energy_df)
+state_total_dict = pc.precompute_state_per_year(df)
 
 external_stylesheets = ['https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css']
 
@@ -47,25 +48,26 @@ app.layout = html.Div(children = [
                                 html.Div(
                                     children = [
                                         html.H3(
-                                            "Total energy consumption",
-                                            className="plot-header main-plot-header-col"
+                                            id="main-plot-header",
+                                            className="plot-header"
                                         ),
-                                        dcc.RadioItems(
+                                        dcc.Dropdown(
                                             options=[
-                                                {'label': 'Total',
-                                                    'value': 'Total'},
-                                                {'label': 'Total (by resource)',
-                                                    'value': 'Total (by resource)'},
-                                                {'label': 'Resource',
-                                                    'value': 'Resource'},
+                                                {'label': 'Energy consumption',
+                                                    'value': 'Energy consumption'},
+                                                {'label': 'Energy consumption (per capita)',
+                                                    'value': 'Energy consumption (per capita)'},
+                                                {'label': 'Energy consumption (per resource)',
+                                                    'value': 'Energy consumption (per resource)'},
+                                                {'label': 'Resource consumption',
+                                                    'value': 'Resource consumption'},
                                             ],
-                                            value='Total',
-                                            labelStyle={
-                                                'display': 'inline-block'},
-                                            className="main-plot-header-col",
-                                            id="main-plot-type"
+                                            value='Energy consumption',
+                                            className="plot-type-dropdown",
+                                            id="main-plot-type",
+                                            clearable=False
                                         ),
-                                        dcc.RadioItems(
+                                        dcc.Dropdown(
                                             options=[
                                                 {'label': 'Year',
                                                     'value': 'Year'},
@@ -73,10 +75,8 @@ app.layout = html.Div(children = [
                                                     'value': 'President'},
                                             ],
                                             value='Year',
-                                            labelStyle={
-                                                'display': 'inline-block'},
-                                            className="main-plot-header-col",
-                                            id="x-axis-labels"
+                                            id="x-axis-labels",
+                                            clearable=False
                                         )
                                     ],
                                     className="row"
@@ -106,65 +106,87 @@ app.layout = html.Div(children = [
                             className="plot"
                         ),
                         className="col-xl-4"
-                    )
+                    ),
                 ],
                 className="row"
             ),
-            # html.Div(
-            #     children = [
-            #         html.Div(
-            #             html.Div(
-            #                 children=[
-            #                     html.H3(
-            #                         "Resource usage",
-            #                         className="plot-header"
-            #                     ),
-            #                     dcc.Graph(
-            #                         id="us-total-stacked-area",
-            #                         figure=pc.us_total_stacked_area(
-            #                             primary_energy_df),
-            #                         style={"height": plotting.PLOT_HEIGHT},
-            #                         hoverData={"points": [
-            #                             {"x": 2018}]},
-            #                     )
-            #                 ],
-            #                 className="plot"
-            #             ),
-            #             className="col-xl-8 order-xl-12"
-            #         ),
-            #         html.Div(
-            #             html.Div(
-            #                 children=[
-            #                     html.H3(
-            #                         id="us-primary-pie-header",
-            #                         className="plot-header"
-            #                     ),
-            #                     dcc.Graph(
-            #                         id="us-primary-pie",
-            #                         style={"height": plotting.PLOT_HEIGHT}
-            #                     )
-            #                 ],
-            #                 className="plot"
-            #             ),
-            #             className="col-xl-4 order-xl-1"
-            #         ),
-            #     ],
-            #     className="row"
-            # )
+            html.Div(
+                children = [
+                    html.Div(
+                        html.Div(
+                            children=[
+                                html.Div(
+                                    children = [
+                                        html.H3(
+                                            "United States choropleth",
+                                            className="plot-header"
+                                        ),
+                                        dcc.Dropdown(
+                                            options=[
+                                                {'label': 'Energy consumption',
+                                                    'value': 'Energy consumption'},
+                                                {'label': 'Energy consumption (per capita)',
+                                                    'value': 'Energy consumption (per capita)'},
+                                            ],
+                                            value='Energy consumption (per capita)',
+                                            className="plot-type-dropdown",
+                                            id="choropleth-plot-type",
+                                            clearable=False
+                                        ),
+                                    ],
+                                    className="row"
+                                ),
+                                # dcc.Graph(
+                                #     id="us-choropleth",
+                                #     style={"height": plotting.PLOT_HEIGHT}
+                                # )
+                            ],
+                            className="plot"
+                        ),
+                        className="col-xl-4"
+                    ),
+                    html.Div(
+                        html.Div(
+                            children=[
+                                html.Div(
+                                    children=[
+                                        html.H3(
+                                            id="state-plot-header",
+                                            className="plot-header"
+                                        ),
+                                        dcc.Dropdown(
+                                            options=[
+                                                {'label': 'Energy consumption',
+                                                    'value': 'Energy consumption'},
+                                                {'label': 'Energy consumption (per capita)',
+                                                    'value': 'Energy consumption (per capita)'},
+                                            ],
+                                            value='Energy consumption',
+                                            className="plot-type-dropdown",
+                                            id="state-plot-type",
+                                            clearable=False
+                                        ),
+                                    ],
+                                    className="row"
+                                ),
+                                dcc.Graph(
+                                    id="state-total-bar",
+                                    style={"height": plotting.PLOT_HEIGHT}
+                                )
+                            ],
+                            className="plot"
+                        ),
+                        className="col-xl-8"
+                    ),
+                ],
+                className="row"
+            ),
         ],
         className="container-fluid dash"
     )
 ])
 
 ########## HEADERS
-@app.callback(
-    Output('us-primary-pie-header', 'children'),
-    Input('us-total-stacked-area', 'hoverData')
-)
-def us_primary_pie_header(hoverData):
-    year_value = int(hoverData['points'][0]['x'])
-    return f"Resource usage ({year_value})"
-
 
 @app.callback(
     Output('us-primary-header', 'children'),
@@ -172,7 +194,24 @@ def us_primary_pie_header(hoverData):
 )
 def us_primary_bar_header(hoverData):
     year_value = int(hoverData['points'][0]['x'][:4])
-    return f"Total energy consumption ({year_value})"
+    return f"Resource usage ({year_value})"
+
+
+@app.callback(
+    Output('main-plot-header', 'children'),
+    Input("main-plot-type", "value"),
+)
+def update_main_plot_header(main_plot_type):
+    return main_plot_type
+
+@app.callback(
+    Output('state-plot-header', 'children'),
+    [Input("state-plot-type", "value"),
+     Input('us-total', 'hoverData')]
+)
+def update_state_plot_header(main_plot_type, hoverData):
+    year_value = int(hoverData['points'][0]['x'][:4])
+    return f"{main_plot_type} ({year_value})"
 
 ########## MAIN PLOT
 @app.callback(
@@ -197,14 +236,15 @@ def us_primary_bar(hoverData):
     return fig
 
 @app.callback(
-    Output('us-primary-pie', 'figure'),
-    Input('us-total-stacked-area', 'hoverData')
+    Output('state-total-bar', 'figure'),
+    [Input('state-plot-type', 'value'),
+    Input('us-total', 'hoverData')]
 )
-def us_primary_pie(hoverData):
-    year_value = int(hoverData['points'][0]['x'])
-    fig = us_primary_pie_dict[year_value]
+def update_state_bar_plot(state_plot_type, hoverData):
+    year_value = int(hoverData['points'][0]['x'][:4])
+    dict_key = state_plot_type + str(year_value)
+    fig = state_total_dict[dict_key]
     return fig
-
 
 if __name__ == '__main__':
     app.run_server(debug=DEBUG)
