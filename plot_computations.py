@@ -309,9 +309,9 @@ def update_choropleth(df, geojson):
     max_y = per_cap_df["Million BTU"].max()
 
     fig = px.choropleth_mapbox(per_cap_df, geojson=geojson, locations="State", color="Million BTU",
-                               featureidkey="properties.NAME", color_continuous_scale=plotly.colors.diverging.Temps, range_color=(0, max_y))
+                               featureidkey="properties.NAME", color_continuous_scale=plotly.colors.diverging.Temps, range_color=(0, max_y), animation_frame="Year")
     fig.update_layout(mapbox_style="carto-positron",
-                      mapbox_zoom=2.7, mapbox_center={"lat": 37.1, "lon": -95.7})
+                      mapbox_zoom=2.2, mapbox_center={"lat": 37.8, "lon": -95.7})
     fig.update_layout(plotting.CHOROPLETH_COLORS)
     # fig.update_layout(plotting.CHOROPLETH_COLORS)
     return fig
