@@ -2,6 +2,8 @@
 # Date: 02/03/2021
 # Purpose: US energy consumption app
 
+import json
+
 import dash
 import dash_table
 import dash_core_components as dcc
@@ -20,11 +22,13 @@ DEBUG = True
 
 df = dp.load_dataset()
 primary_energy_df = dp.load_primary_energy_sources(df)
+with open(r"data\united_states.geojson") as infile:
+    united_states_geojson = json.load(infile)
 
 # Precomputed figures
 us_main_plot_dict = pc.precompute_main_plots(df, primary_energy_df)
 us_primary_bar_dict = pc.us_primary_per_year(primary_energy_df)
-# us_primary_pie_dict = pc.us_primary_per_year_pie(primary_energy_df)
+us_primary_pie_dict = pc.precompute_pie_plot_per_year(primary_energy_df)
 state_total_dict = pc.precompute_state_per_year(df)
 
 external_stylesheets = ['https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css']
@@ -35,6 +39,16 @@ if not DEBUG:
     server = app.server
 
 app.layout = html.Div(children = [
+    html.Div(
+        children=[
+            html.Div(
+                dcc.Graph(
+                    id="choropleth",
+                    figure=pc.update_choropleth(df, united_states_geojson)
+                )
+            ),
+        ]
+    ),
     html.Div(
         children = [
             html.H1("United States Energy Consumption", style={"font-size": "6vh", "text-align": "center"}),
@@ -115,31 +129,14 @@ app.layout = html.Div(children = [
                     html.Div(
                         html.Div(
                             children=[
-                                html.Div(
-                                    children = [
-                                        html.H3(
-                                            "United States choropleth",
-                                            className="plot-header"
-                                        ),
-                                        dcc.Dropdown(
-                                            options=[
-                                                {'label': 'Energy consumption',
-                                                    'value': 'Energy consumption'},
-                                                {'label': 'Energy consumption (per capita)',
-                                                    'value': 'Energy consumption (per capita)'},
-                                            ],
-                                            value='Energy consumption (per capita)',
-                                            className="plot-type-dropdown",
-                                            id="choropleth-plot-type",
-                                            clearable=False
-                                        ),
-                                    ],
-                                    className="row"
+                                html.H3(
+                                    id="us-pie-header",
+                                    className="plot-header"
                                 ),
-                                # dcc.Graph(
-                                #     id="us-choropleth",
-                                #     style={"height": plotting.PLOT_HEIGHT}
-                                # )
+                                dcc.Graph(
+                                    id="us-primary-pie",
+                                    style={"height": plotting.PLOT_HEIGHT}
+                                )
                             ],
                             className="plot"
                         ),
@@ -196,6 +193,13 @@ def us_primary_bar_header(hoverData):
     year_value = int(hoverData['points'][0]['x'][:4])
     return f"Resource usage ({year_value})"
 
+@app.callback(
+    Output('us-pie-header', 'children'),
+    Input('us-total', 'hoverData')
+)
+def us_primary_bar_header(hoverData):
+    year_value = int(hoverData['points'][0]['x'][:4])
+    return f"Resource % ({year_value})"
 
 @app.callback(
     Output('main-plot-header', 'children'),
@@ -222,6 +226,17 @@ def update_state_plot_header(main_plot_type, hoverData):
 def update_main_plot(depiction_type, x_axis_type):
     fig_key = depiction_type + x_axis_type
     fig = us_main_plot_dict[fig_key]
+    return fig
+
+########## PIE CHART
+
+@app.callback(
+    Output('us-primary-pie', 'figure'),
+    Input('us-total', 'hoverData')
+)
+def us_primary_pie(hoverData):
+    year_value = int(hoverData['points'][0]['x'][:4])
+    fig = us_primary_pie_dict[year_value]
     return fig
 
 ########## BAR PLOT
