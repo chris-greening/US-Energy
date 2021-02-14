@@ -144,8 +144,6 @@ def us_total(total_df, primary_df, depiction_type, x_axis_type):
     fig.update_layout(plotting.PLOT_COLORS)
     return fig
 
-    # return per_cap_df, consumption_df
-
 def calculate_bounds(consumption_df):
     min_x = datetime.date(1960, 1, 1)
     min_y = consumption_df["Quadrillion BTU"].min()
@@ -280,21 +278,40 @@ def precompute_pie_plot_per_year(primary_df):
     consumption_df["BTU"] = consumption_df["BTU"]/1_000_000
     consumption_df = consumption_df.rename(columns={"BTU": "Quadrillion BTU"})
 
-    min_y = 0
-    max_y = consumption_df["Quadrillion BTU"].max()
-    max_y = max_y + max_y*.05
-
     figs = {}
     for year in consumption_df["Year"].unique():
-        fig = px.bar(
+        fig = px.pie(
                 consumption_df[consumption_df["Year"] == year],
-                x="Source",
-                y="Quadrillion BTU",
+                names="Source",
+                values="Quadrillion BTU",
                 color="Source",
-                range_y=[min_y, max_y],
-                color_discrete_map=plotting.ENERGY_SOURCE_COLORS
+                color_discrete_map=plotting.ENERGY_SOURCE_COLORS,
+                hole=.4
         )
-        fig.update_layout(plotting.PLOT_COLORS, showlegend=False)
-        fig.update_xaxes(title_text="", categoryorder="total ascending")
+        fig.update_layout(plotting.PLOT_COLORS)
         figs[year] = fig
     return figs
+
+def update_choropleth(df, geojson):
+    # Prepare the datasets
+    primary_df = dp.load_primary_energy_sources(df)
+    primary_df = dp.data_subset(primary_df, states=[state for state in primary_df["State"].unique(
+    ) if state != "United States"], sectors=["Total"])
+    primary_df["BTU"] = primary_df["BTU"]/1_000_000
+    primary_df = primary_df.rename(columns={"BTU": "Quadrillion BTU"})
+    primary_df = primary_df.groupby(["State", "Year"], as_index=False).sum()
+    primary_df = primary_df[primary_df["Year"] == 2018]
+
+    per_cap_df = dp.data_subset(df, states=[state for state in df["State"].unique(
+    ) if state != "United States"], sources=["Total"], sectors=["Total consumption per capita"])
+    per_cap_df = per_cap_df.rename(columns={"BTU": "Million BTU"})
+
+    max_y = per_cap_df["Million BTU"].max()
+
+    fig = px.choropleth_mapbox(per_cap_df, geojson=geojson, locations="State", color="Million BTU",
+                               featureidkey="properties.NAME", color_continuous_scale=plotly.colors.diverging.Temps, range_color=(0, max_y))
+    fig.update_layout(mapbox_style="carto-positron",
+                      mapbox_zoom=2.7, mapbox_center={"lat": 37.1, "lon": -95.7})
+    fig.update_layout(plotting.CHOROPLETH_COLORS)
+    # fig.update_layout(plotting.CHOROPLETH_COLORS)
+    return fig
