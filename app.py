@@ -30,6 +30,7 @@ us_main_plot_dict = pc.precompute_main_plots(df, primary_energy_df)
 us_primary_bar_dict = pc.us_primary_per_year(primary_energy_df)
 us_primary_pie_dict = pc.precompute_pie_plot_per_year(primary_energy_df)
 state_total_dict = pc.precompute_state_per_year(df)
+choropleth = pc.update_choropleth(df, united_states_geojson)
 
 external_stylesheets = ['https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css']
 
@@ -44,7 +45,7 @@ app.layout = html.Div(children = [
             html.Div(
                 dcc.Graph(
                     id="choropleth",
-                    figure=pc.update_choropleth(df, united_states_geojson)
+                    figure=choropleth
                 )
             ),
         ]
