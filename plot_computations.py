@@ -275,40 +275,47 @@ def state_bar_plot(primary_df, max_y):
     return fig
 
 def state_per_cap_bar_plot(per_cap_df, max_y):
-    min_y = 0
+#     min_y = 0
 
-    fig = px.bar(
-        per_cap_df,
-        x="State",
-        y="Million BTU",
-        color="Million BTU",
-        color_continuous_scale=px.colors.diverging.RdYlGn[::-1],
-        range_y=[min_y, max_y],
-        range_color=[0, max_y]
-    )
-    fig.update_xaxes(title_text="", categoryorder="total ascending",
-                     tickfont=dict(size=8), tickmode="linear")
-    fig.update_layout(plotting.PLOT_COLORS, showlegend=False)
-    return fig
+#     fig = px.bar(
+#         per_cap_df,
+#         x="State",
+#         y="Million BTU",
+#         color="Million BTU",
+#         color_continuous_scale=px.colors.diverging.RdYlGn[::-1],
+#         range_y=[min_y, max_y],
+#         range_color=[0, max_y]
+#     )
+#     fig.update_xaxes(title_text="", categoryorder="total ascending",
+#                      tickfont=dict(size=8), tickmode="linear")
+#     fig.update_layout(plotting.PLOT_COLORS, showlegend=False)
+#     return fig
 
-def precompute_pie_plot_per_year(primary_df):
+# def precompute_pie_plot_per_year(primary_df):
     consumption_df = dp.data_subset(primary_df, states=["United States"], sectors=["Total"])
     consumption_df = consumption_df.groupby(["Year", "Sector", "Source"], as_index=False).sum()
     consumption_df["BTU"] = consumption_df["BTU"]/1_000_000
     consumption_df = consumption_df.rename(columns={"BTU": "Quadrillion BTU"})
 
+#     figs = {}
+#     for year in consumption_df["Year"].unique():
+        # fig = px.pie(
+        #         consumption_df[consumption_df["Year"] == year],
+        #         names="Source",
+        #         values="Quadrillion BTU",
+        #         color="Source",
+        #         color_discrete_map=plotting.ENERGY_SOURCE_COLORS,
+        #         hole=.4
+        # )
+        # fig.update_layout(plotting.PLOT_COLORS)
+    directory = os.path.abspath(os.path.join(os.path.join(
+        "data", "precomputed_plots"), "primary_per_year"))
     figs = {}
     for year in consumption_df["Year"].unique():
-        fig = px.pie(
-                consumption_df[consumption_df["Year"] == year],
-                names="Source",
-                values="Quadrillion BTU",
-                color="Source",
-                color_discrete_map=plotting.ENERGY_SOURCE_COLORS,
-                hole=.4
-        )
-        fig.update_layout(plotting.PLOT_COLORS)
-        figs[year] = fig
+        fname = os.path.join(directory, f"{year}.json")
+        with open(fname) as infile:
+            data = infile.read()
+        figs[year] = pio.from_json(data)
     return figs
 
 def update_choropleth(df, geojson):
