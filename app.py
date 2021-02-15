@@ -35,19 +35,24 @@ with open(os.path.join("data", "united_states.geojson")) as infile:
 # Precomputed figures
 # us_main_plot_dict = pc.precompute_main_plots(df, primary_energy_df)
 # state_total_dict = pc.precompute_state_per_year(df)
-choropleth = pc.update_choropleth(df, united_states_geojson)
 
 app.layout = html.Div(children = [
-    html.Div(
-        children=[
-            html.Div(
-                dcc.Graph(
-                    id="choropleth",
-                    figure=choropleth
-                )
-            ),
-        ]
-    ),
+    # html.Div(
+    #     children=[
+    #         html.Div(
+    #             dcc.Graph(
+    #                 id="choropleth",
+    #                 figure=pc.update_choropleth(df, united_states_geojson)
+    #             ),
+    #         ),
+    #         dcc.Dropdown(
+    #             id='year-slider',
+    #             options=[{"value": year, "label": str(year)} for year in df["Year"].unique()],
+    #             value=2018,
+    #             style={"width" : "100px", "margin-left": "30px"}
+    #         ),
+    #     ]
+    # ),
     html.Div(
         children = [
             html.H1("United States Energy Consumption", style={"font-size": "4vw", "text-align": "center"}),
