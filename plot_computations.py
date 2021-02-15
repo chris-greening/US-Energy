@@ -204,7 +204,7 @@ def us_primary_per_year(primary_df):
     #     fig.update_layout(plotting.PLOT_COLORS, showlegend=False)
     #     fig.update_xaxes(title_text="", categoryorder="total ascending")
     #     figs[year] = fig
-    directory = r"D:\Programming\pythonstuff\US-Energy\data\precomputed_plots\primary_per_year"
+    directory = os.path.abspath(os.path.join(os.path.join("data","precomputed_plots"), "primary_per_year"))
     figs = {}
     for year in consumption_df["Year"].unique():
         fname = os.path.join(directory, f"{year}.json")
