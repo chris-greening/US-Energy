@@ -59,8 +59,8 @@ input[type="radio"] {
 }
 
 ._dash-loading {
-  background-image: url("dash-loading.gif");
-  background-size: 25vh;
+  background-image: url("loading.gif");
+  background-size: 300px;
   background-repeat: no-repeat;
   background-position: center;
   height: 100vh;
@@ -162,6 +162,11 @@ hr {
 }
 
 #us-primary-header {
+  width: 100%;
+  padding-left: 0px;
+}
+
+#us-pie-header {
   width: 100%;
   padding-left: 0px;
 }
