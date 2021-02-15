@@ -11,17 +11,17 @@ import data_processing as dp
 import plotting
 import presidents
 
-def precompute_main_plots(total_df, primary_df):
-    depiction_types = ["Energy consumption", "Energy consumption (per capita)", "Energy consumption (per resource)", "Resource consumption"]
-    x_axis_types = ["Year", "President"]
+def precompute_main_plots(total_df, primary_df, depiction, x_axis):
+    # depiction_types = ["Energy consumption", "Energy consumption (per capita)", "Energy consumption (per resource)", "Resource consumption"]
+    # x_axis_types = ["Year", "President"]
 
-    combinations = [[depiction, x_axis] for depiction in depiction_types for x_axis in x_axis_types]
+    # combinations = [[depiction, x_axis] for depiction in depiction_types for x_axis in x_axis_types]
 
-    figs = {}
-    for depiction, x_axis in combinations:
-        fig = us_total(total_df, primary_df, depiction, x_axis)
-        figs[depiction + x_axis] = fig
-    return figs
+    # figs = {}
+    # for depiction, x_axis in combinations:
+    fig = us_total(total_df, primary_df, depiction, x_axis)
+    # figs[depiction + x_axis] = fig
+    return fig
 
 def us_total(total_df, primary_df, depiction_type, x_axis_type):
     # Subset the data
@@ -204,10 +204,10 @@ def us_primary_per_year(primary_df, year):
     fig.update_xaxes(title_text="", categoryorder="total ascending")
     return fig
 
-def precompute_state_per_year(total_df):
+def precompute_state_per_year(total_df, primary_df, depiction, year):
 
     # Prepare the datasets
-    primary_df = dp.load_primary_energy_sources(total_df)
+    # primary_df = dp.load_primary_energy_sources(total_df)
     primary_df = dp.data_subset(primary_df, states=[state for state in total_df["State"].unique(
     ) if state != "United States"], sectors=["Total"])
     primary_df["BTU"] = primary_df["BTU"]/1_000_000
@@ -217,28 +217,27 @@ def precompute_state_per_year(total_df):
     ) if state != "United States"], sources=["Total"], sectors=["Total consumption per capita"])
     per_cap_df = per_cap_df.rename(columns={"BTU": "Million BTU"})
 
-
     max_y = primary_df.groupby(["State", "Year"]).sum()["Quadrillion BTU"].max()
     per_cap_max_y = per_cap_df.groupby(["State", "Year"]).sum()["Million BTU"].max()
     max_y = max_y + max_y*.05
 
     # Create all possible combinations of plots
-    depiction_types = ["Energy consumption", "Energy consumption (per capita)"]
-    years = total_df["Year"].unique()
-    combinations = [[depiction, year]
-                    for depiction in depiction_types for year in years]
+    # depiction_types = ["Energy consumption", "Energy consumption (per capita)"]
+    # years = total_df["Year"].unique()
+    # combinations = [[depiction, year]
+    #                 for depiction in depiction_types for year in years]
 
-    figs = {}
-    for depiction, year in combinations:
-        if depiction == "Energy consumption":
-            year_df = primary_df[primary_df["Year"] == year]
-            year_df = year_df.groupby("State", as_index=False).sum()
-            fig = state_bar_plot(year_df, max_y)
-        else:
-            year_df = per_cap_df[per_cap_df["Year"] == year]
-            fig = state_per_cap_bar_plot(year_df, per_cap_max_y)
-        figs[depiction+str(year)] = fig
-    return figs
+    # figs = {}
+    # for depiction, year in combinations:
+    if depiction == "Energy consumption":
+        year_df = primary_df[primary_df["Year"] == year]
+        year_df = year_df.groupby("State", as_index=False).sum()
+        fig = state_bar_plot(year_df, max_y)
+    else:
+        year_df = per_cap_df[per_cap_df["Year"] == year]
+        fig = state_per_cap_bar_plot(year_df, per_cap_max_y)
+        # figs[depiction+str(year)] = fig
+    return fig
 
 def state_bar_plot(primary_df, max_y):
     # Prepare the dataset

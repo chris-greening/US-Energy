@@ -33,8 +33,8 @@ with open(os.path.join("data", "united_states.geojson")) as infile:
     united_states_geojson = json.load(infile)
 
 # Precomputed figures
-us_main_plot_dict = pc.precompute_main_plots(df, primary_energy_df)
-state_total_dict = pc.precompute_state_per_year(df)
+# us_main_plot_dict = pc.precompute_main_plots(df, primary_energy_df)
+# state_total_dict = pc.precompute_state_per_year(df)
 choropleth = pc.update_choropleth(df, united_states_geojson)
 
 app.layout = html.Div(children = [
@@ -223,8 +223,9 @@ def update_state_plot_header(main_plot_type, clickData):
     Input("x-axis-labels", "value")]
 )
 def update_main_plot(depiction_type, x_axis_type):
-    fig_key = depiction_type + x_axis_type
-    fig = us_main_plot_dict[fig_key]
+    # fig_key = depiction_type + x_axis_type
+    fig = pc.precompute_main_plots(df, primary_energy_df, depiction_type, x_axis_type)
+    # fig = us_main_plot_dict[fig_key]
     return fig
 
 ########## PIE CHART
@@ -256,8 +257,9 @@ def us_primary_bar(clickData):
 )
 def update_state_bar_plot(state_plot_type, clickData):
     year_value = int(clickData['points'][0]['x'][:4])
-    dict_key = state_plot_type + str(year_value)
-    fig = state_total_dict[dict_key]
+    # dict_key = state_plot_type + str(year_value)
+    # fig = state_total_dict[dict_key]
+    fig = pc.precompute_state_per_year(df, primary_energy_df, state_plot_type, year_value)
     return fig
 
 if __name__ == '__main__':
