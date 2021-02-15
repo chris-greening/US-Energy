@@ -47,12 +47,12 @@ def data_subset(df, states=None, years=None, sectors=None, sources=None) -> pd.D
 
 def load_dataset():
     """Return a DataFrame with all of the mapped data"""
-    df = pd.read_csv(r"data\use_all_btu.csv")
+    df = pd.read_csv(os.path.join("data", "use_all_btu.csv"))
 
-    state_abbr_map = map_from_csv(r"data\states.csv")
-    energy_codes_map = map_from_csv(r"data\energy_codes.csv")
-    sector_codes_map = map_from_csv(r"data\sector_codes.csv")
-    unit_codes_map = map_from_csv(r"data\unit_codes.csv")
+    state_abbr_map = map_from_csv(os.path.join("data", "states.csv"))
+    energy_codes_map = map_from_csv(os.path.join("data", "energy_codes.csv"))
+    sector_codes_map = map_from_csv(os.path.join("data", "sector_codes.csv"))
+    unit_codes_map = map_from_csv(os.path.join("data", "unit_codes.csv"))
     # state_color_map = map_from_csv(r"data\state_plot_colors.csv")
 
     df = create_code_columns(df)

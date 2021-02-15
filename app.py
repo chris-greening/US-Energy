@@ -3,6 +3,7 @@
 # Purpose: US energy consumption app
 
 import json
+import os
 
 import dash
 import dash_table
@@ -22,7 +23,7 @@ DEBUG = False
 
 df = dp.load_dataset()
 primary_energy_df = dp.load_primary_energy_sources(df)
-with open(r"data\united_states.geojson") as infile:
+with open(os.path.join("data", "united_states.geojson")) as infile:
     united_states_geojson = json.load(infile)
 
 # Precomputed figures
