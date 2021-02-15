@@ -1,7 +1,10 @@
 import datetime
+import json
+import os
 
 import plotly.express as px
 import plotly
+import plotly.io as pio
 
 import data_processing as dp
 import plotting
@@ -180,27 +183,34 @@ def add_presidential_axes(fig) -> None:
 
 def us_primary_per_year(primary_df):
     consumption_df = dp.data_subset(primary_df, states=["United States"], sectors=["Total"])
-    consumption_df = consumption_df.groupby(["Year", "Sector", "Source"], as_index=False).sum()
-    consumption_df["BTU"] = consumption_df["BTU"]/1_000_000
-    consumption_df = consumption_df.rename(columns={"BTU": "Quadrillion BTU"})
+    # consumption_df = consumption_df.groupby(["Year", "Sector", "Source"], as_index=False).sum()
+    # consumption_df["BTU"] = consumption_df["BTU"]/1_000_000
+    # consumption_df = consumption_df.rename(columns={"BTU": "Quadrillion BTU"})
 
-    min_y = 0
-    max_y = consumption_df["Quadrillion BTU"].max()
-    max_y = max_y + max_y*.05
+    # min_y = 0
+    # max_y = consumption_df["Quadrillion BTU"].max()
+    # max_y = max_y + max_y*.05
 
+    # figs = {}
+    # for year in consumption_df["Year"].unique():
+    #     fig = px.bar(
+    #             consumption_df[consumption_df["Year"] == year],
+    #             x="Source",
+    #             y="Quadrillion BTU",
+    #             color="Source",
+    #             range_y=[min_y, max_y],
+    #             color_discrete_map=plotting.ENERGY_SOURCE_COLORS
+    #     )
+    #     fig.update_layout(plotting.PLOT_COLORS, showlegend=False)
+    #     fig.update_xaxes(title_text="", categoryorder="total ascending")
+    #     figs[year] = fig
+    directory = r"D:\Programming\pythonstuff\US-Energy\data\precomputed_plots\primary_per_year"
     figs = {}
     for year in consumption_df["Year"].unique():
-        fig = px.bar(
-                consumption_df[consumption_df["Year"] == year],
-                x="Source",
-                y="Quadrillion BTU",
-                color="Source",
-                range_y=[min_y, max_y],
-                color_discrete_map=plotting.ENERGY_SOURCE_COLORS
-        )
-        fig.update_layout(plotting.PLOT_COLORS, showlegend=False)
-        fig.update_xaxes(title_text="", categoryorder="total ascending")
-        figs[year] = fig
+        fname = os.path.join(directory, f"{year}.json")
+        with open(fname) as infile:
+            data = infile.read()
+        figs[year] = pio.from_json(data)
     return figs
 
 def precompute_state_per_year(total_df):
