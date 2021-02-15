@@ -98,7 +98,7 @@ app.layout = html.Div(children = [
                                 ),
                                 dcc.Graph(
                                     id="us-total",
-                                    hoverData={"points": [{"x": "2018-01-01"}]},
+                                    clickData={"points": [{"x": "2018-01-01"}]},
                                     style={"height": plotting.PLOT_HEIGHT}
                                 )
                             ],
@@ -188,18 +188,18 @@ app.layout = html.Div(children = [
 
 @app.callback(
     Output('us-primary-header', 'children'),
-    Input('us-total', 'hoverData')
+    Input('us-total', 'clickData')
 )
-def us_primary_bar_header(hoverData):
-    year_value = int(hoverData['points'][0]['x'][:4])
+def us_primary_bar_header(clickData):
+    year_value = int(clickData['points'][0]['x'][:4])
     return f"Resource usage ({year_value})"
 
 @app.callback(
     Output('us-pie-header', 'children'),
-    Input('us-total', 'hoverData')
+    Input('us-total', 'clickData')
 )
-def us_primary_pie_header(hoverData):
-    year_value = int(hoverData['points'][0]['x'][:4])
+def us_primary_pie_header(clickData):
+    year_value = int(clickData['points'][0]['x'][:4])
     return f"Resource % ({year_value})"
 
 @app.callback(
@@ -212,10 +212,10 @@ def update_main_plot_header(main_plot_type):
 @app.callback(
     Output('state-plot-header', 'children'),
     [Input("state-plot-type", "value"),
-     Input('us-total', 'hoverData')]
+     Input('us-total', 'clickData')]
 )
-def update_state_plot_header(main_plot_type, hoverData):
-    year_value = int(hoverData['points'][0]['x'][:4])
+def update_state_plot_header(main_plot_type, clickData):
+    year_value = int(clickData['points'][0]['x'][:4])
     return f"{main_plot_type} ({year_value})"
 
 ########## MAIN PLOT
@@ -233,10 +233,10 @@ def update_main_plot(depiction_type, x_axis_type):
 
 @app.callback(
     Output('us-primary-pie', 'figure'),
-    Input('us-total', 'hoverData')
+    Input('us-total', 'clickData')
 )
-def us_primary_pie(hoverData):
-    year_value = int(hoverData['points'][0]['x'][:4])
+def us_primary_pie(clickData):
+    year_value = int(clickData['points'][0]['x'][:4])
     fig = us_primary_pie_dict[year_value]
     return fig
 
@@ -244,20 +244,20 @@ def us_primary_pie(hoverData):
 
 @app.callback(
     Output('us-primary-bar', 'figure'),
-    Input('us-total', 'hoverData')
+    Input('us-total', 'clickData')
 )
-def us_primary_bar(hoverData):
-    year_value = int(hoverData['points'][0]['x'][:4])
+def us_primary_bar(clickData):
+    year_value = int(clickData['points'][0]['x'][:4])
     fig = us_primary_bar_dict[year_value]
     return fig
 
 @app.callback(
     Output('state-total-bar', 'figure'),
     [Input('state-plot-type', 'value'),
-    Input('us-total', 'hoverData')]
+    Input('us-total', 'clickData')]
 )
-def update_state_bar_plot(state_plot_type, hoverData):
-    year_value = int(hoverData['points'][0]['x'][:4])
+def update_state_bar_plot(state_plot_type, clickData):
+    year_value = int(clickData['points'][0]['x'][:4])
     dict_key = state_plot_type + str(year_value)
     fig = state_total_dict[dict_key]
     return fig
