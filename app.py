@@ -52,7 +52,7 @@ app.layout = html.Div(children = [
     ),
     html.Div(
         children = [
-            html.H1("United States Energy Consumption", style={"font-size": "6vh", "text-align": "center"}),
+            html.H1("United States Energy Consumption", style={"font-size": "4vw", "text-align": "center"}),
             dcc.Markdown(markdown.INTRO, id="intro-text"),
             html.Hr(),
             html.Div(
