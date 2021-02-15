@@ -18,7 +18,7 @@ import plot_computations as pc
 import plotting
 import markdown
 
-DEBUG = True
+DEBUG = False
 
 df = dp.load_dataset()
 primary_energy_df = dp.load_primary_energy_sources(df)
