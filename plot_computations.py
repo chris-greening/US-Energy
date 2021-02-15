@@ -304,14 +304,25 @@ def update_choropleth(df, geojson):
 
     per_cap_df = dp.data_subset(df, states=[state for state in df["State"].unique(
     ) if state != "United States"], sources=["Total"], sectors=["Total consumption per capita"])
-    per_cap_df = per_cap_df.rename(columns={"BTU": "Million BTU"})
+    per_cap_df = per_cap_df.rename(columns={"BTU": "Million BTU per capita"})
 
-    max_y = per_cap_df["Million BTU"].max()
+    max_y = per_cap_df["Million BTU per capita"].max()
 
-    fig = px.choropleth_mapbox(per_cap_df, geojson=geojson, locations="State", color="Million BTU",
-                               featureidkey="properties.NAME", color_continuous_scale=plotly.colors.diverging.Temps, range_color=(0, max_y), animation_frame="Year")
-    fig.update_layout(mapbox_style="carto-positron",
-                      mapbox_zoom=2.2, mapbox_center={"lat": 37.8, "lon": -95.7})
+    fig = px.choropleth_mapbox(
+                            per_cap_df,
+                            geojson=geojson,
+                            locations="State",
+                            color="Million BTU per capita",
+                            featureidkey="properties.NAME",
+                            color_continuous_scale=plotly.colors.diverging.Temps,
+                            range_color=(0, max_y),
+                            animation_frame="Year",
+    )
+    fig.update_layout(
+                mapbox_style="carto-positron",
+                mapbox_zoom=2.2,
+                mapbox_center={"lat": 37.8, "lon": -95.7},
+    )
     fig.update_layout(plotting.CHOROPLETH_COLORS)
     # fig.update_layout(plotting.CHOROPLETH_COLORS)
     return fig
