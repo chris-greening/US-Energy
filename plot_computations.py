@@ -182,79 +182,62 @@ def add_presidential_axes(fig) -> None:
     fig.update_xaxes(showgrid=False, ticktext=ticktext, tickvals=tickvals, title="President")
     fig.update_yaxes(showgrid=False)
 
-def us_primary_per_year(primary_df):
+def us_primary_per_year(primary_df, year):
     consumption_df = dp.data_subset(primary_df, states=["United States"], sectors=["Total"])
-    # consumption_df = consumption_df.groupby(["Year", "Sector", "Source"], as_index=False).sum()
-    # consumption_df["BTU"] = consumption_df["BTU"]/1_000_000
-    # consumption_df = consumption_df.rename(columns={"BTU": "Quadrillion BTU"})
+    consumption_df = consumption_df.groupby(["Year", "Sector", "Source"], as_index=False).sum()
+    consumption_df["BTU"] = consumption_df["BTU"]/1_000_000
+    consumption_df = consumption_df.rename(columns={"BTU": "Quadrillion BTU"})
 
-    # min_y = 0
-    # max_y = consumption_df["Quadrillion BTU"].max()
-    # max_y = max_y + max_y*.05
+    min_y = 0
+    max_y = consumption_df["Quadrillion BTU"].max()
+    max_y = max_y + max_y*.05
 
-    # figs = {}
-    # for year in consumption_df["Year"].unique():
-    #     fig = px.bar(
-    #             consumption_df[consumption_df["Year"] == year],
-    #             x="Source",
-    #             y="Quadrillion BTU",
-    #             color="Source",
-    #             range_y=[min_y, max_y],
-    #             color_discrete_map=plotting.ENERGY_SOURCE_COLORS
-    #     )
-    #     fig.update_layout(plotting.PLOT_COLORS, showlegend=False)
-    #     fig.update_xaxes(title_text="", categoryorder="total ascending")
-    #     figs[year] = fig
-    directory = os.path.abspath(os.path.join(os.path.join("data","precomputed_plots"), "primary_per_year"))
-    figs = {}
-    for year in consumption_df["Year"].unique():
-        fname = os.path.join(directory, f"{year}.json")
-        with open(fname) as infile:
-            data = infile.read()
-        figs[year] = pio.from_json(data)
-    return figs
+    fig = px.bar(
+            consumption_df[consumption_df["Year"] == year],
+            x="Source",
+            y="Quadrillion BTU",
+            color="Source",
+            range_y=[min_y, max_y],
+            color_discrete_map=plotting.ENERGY_SOURCE_COLORS
+    )
+    fig.update_layout(plotting.PLOT_COLORS, showlegend=False)
+    fig.update_xaxes(title_text="", categoryorder="total ascending")
+    return fig
 
 def precompute_state_per_year(total_df):
 
-    # # Prepare the datasets
-    # primary_df = dp.load_primary_energy_sources(total_df)
-    # primary_df = dp.data_subset(primary_df, states=[state for state in total_df["State"].unique(
-    # ) if state != "United States"], sectors=["Total"])
-    # primary_df["BTU"] = primary_df["BTU"]/1_000_000
-    # primary_df = primary_df.rename(columns={"BTU": "Quadrillion BTU"})
+    # Prepare the datasets
+    primary_df = dp.load_primary_energy_sources(total_df)
+    primary_df = dp.data_subset(primary_df, states=[state for state in total_df["State"].unique(
+    ) if state != "United States"], sectors=["Total"])
+    primary_df["BTU"] = primary_df["BTU"]/1_000_000
+    primary_df = primary_df.rename(columns={"BTU": "Quadrillion BTU"})
 
-    # per_cap_df = dp.data_subset(total_df, states=[state for state in total_df["State"].unique(
-    # ) if state != "United States"], sources=["Total"], sectors=["Total consumption per capita"])
-    # per_cap_df = per_cap_df.rename(columns={"BTU": "Million BTU"})
+    per_cap_df = dp.data_subset(total_df, states=[state for state in total_df["State"].unique(
+    ) if state != "United States"], sources=["Total"], sectors=["Total consumption per capita"])
+    per_cap_df = per_cap_df.rename(columns={"BTU": "Million BTU"})
 
 
-    # max_y = primary_df.groupby(["State", "Year"]).sum()["Quadrillion BTU"].max()
-    # per_cap_max_y = per_cap_df.groupby(["State", "Year"]).sum()["Million BTU"].max()
-    # max_y = max_y + max_y*.05
+    max_y = primary_df.groupby(["State", "Year"]).sum()["Quadrillion BTU"].max()
+    per_cap_max_y = per_cap_df.groupby(["State", "Year"]).sum()["Million BTU"].max()
+    max_y = max_y + max_y*.05
 
-    # # Create all possible combinations of plots
-    # depiction_types = ["Energy consumption", "Energy consumption (per capita)"]
-    # years = total_df["Year"].unique()
-    # combinations = [[depiction, year]
-    #                 for depiction in depiction_types for year in years]
+    # Create all possible combinations of plots
+    depiction_types = ["Energy consumption", "Energy consumption (per capita)"]
+    years = total_df["Year"].unique()
+    combinations = [[depiction, year]
+                    for depiction in depiction_types for year in years]
 
-    # figs = {}
-    # for depiction, year in combinations:
-    #     if depiction == "Energy consumption":
-    #         year_df = primary_df[primary_df["Year"] == year]
-    #         fig = state_bar_plot(year_df, max_y)
-    #     else:
-    #         year_df = per_cap_df[per_cap_df["Year"] == year]
-    #         fig = state_per_cap_bar_plot(year_df, per_cap_max_y)
-    directory = os.path.abspath(os.path.join(os.path.join(
-            "data", "precomputed_plots"), "state_per_year"))
     figs = {}
-    for fname in [os.path.join(directory, file) for file in os.listdir(directory)]:
-
-        with open(fname) as infile:
-            data = infile.read()
-        name = pathlib.Path(fname).stem
-        figs[name] = pio.from_json(data)
+    for depiction, year in combinations:
+        if depiction == "Energy consumption":
+            year_df = primary_df[primary_df["Year"] == year]
+            year_df = year_df.groupby("State", as_index=False).sum()
+            fig = state_bar_plot(year_df, max_y)
+        else:
+            year_df = per_cap_df[per_cap_df["Year"] == year]
+            fig = state_per_cap_bar_plot(year_df, per_cap_max_y)
+        figs[depiction+str(year)] = fig
     return figs
 
 def state_bar_plot(primary_df, max_y):
@@ -266,7 +249,7 @@ def state_bar_plot(primary_df, max_y):
         primary_df,
         x="State",
         y="Quadrillion BTU",
-        color="Source",
+        # color="Source",
         range_y=[min_y, max_y],
         color_discrete_map=plotting.ENERGY_SOURCE_COLORS
     )
@@ -291,32 +274,22 @@ def state_per_cap_bar_plot(per_cap_df, max_y):
     fig.update_layout(plotting.PLOT_COLORS, showlegend=False)
     return fig
 
-def precompute_pie_plot_per_year(primary_df):
+def pie_plot_per_year(primary_df, year):
     consumption_df = dp.data_subset(primary_df, states=["United States"], sectors=["Total"])
     consumption_df = consumption_df.groupby(["Year", "Sector", "Source"], as_index=False).sum()
     consumption_df["BTU"] = consumption_df["BTU"]/1_000_000
     consumption_df = consumption_df.rename(columns={"BTU": "Quadrillion BTU"})
 
-#     figs = {}
-#     for year in consumption_df["Year"].unique():
-        # fig = px.pie(
-        #         consumption_df[consumption_df["Year"] == year],
-        #         names="Source",
-        #         values="Quadrillion BTU",
-        #         color="Source",
-        #         color_discrete_map=plotting.ENERGY_SOURCE_COLORS,
-        #         hole=.4
-        # )
-        # fig.update_layout(plotting.PLOT_COLORS)
-    directory = os.path.abspath(os.path.join(os.path.join(
-        "data", "precomputed_plots"), "primary_per_year"))
-    figs = {}
-    for year in consumption_df["Year"].unique():
-        fname = os.path.join(directory, f"{year}.json")
-        with open(fname) as infile:
-            data = infile.read()
-        figs[year] = pio.from_json(data)
-    return figs
+    fig = px.pie(
+            consumption_df[consumption_df["Year"] == year],
+            names="Source",
+            values="Quadrillion BTU",
+            color="Source",
+            color_discrete_map=plotting.ENERGY_SOURCE_COLORS,
+            hole=.4
+    )
+    fig.update_layout(plotting.PLOT_COLORS)
+    return fig
 
 def update_choropleth(df, geojson):
     # Prepare the datasets

@@ -19,7 +19,7 @@ import plot_computations as pc
 import plotting
 import markdown
 
-DEBUG = False
+DEBUG = True
 
 external_stylesheets = ['https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css']
 
@@ -34,8 +34,6 @@ with open(os.path.join("data", "united_states.geojson")) as infile:
 
 # Precomputed figures
 us_main_plot_dict = pc.precompute_main_plots(df, primary_energy_df)
-us_primary_bar_dict = pc.us_primary_per_year(primary_energy_df)
-us_primary_pie_dict = pc.precompute_pie_plot_per_year(primary_energy_df)
 state_total_dict = pc.precompute_state_per_year(df)
 choropleth = pc.update_choropleth(df, united_states_geojson)
 
@@ -237,7 +235,7 @@ def update_main_plot(depiction_type, x_axis_type):
 )
 def us_primary_pie(clickData):
     year_value = int(clickData['points'][0]['x'][:4])
-    fig = us_primary_pie_dict[year_value]
+    fig = pc.pie_plot_per_year(primary_energy_df, year_value)
     return fig
 
 ########## BAR PLOT
@@ -248,7 +246,7 @@ def us_primary_pie(clickData):
 )
 def us_primary_bar(clickData):
     year_value = int(clickData['points'][0]['x'][:4])
-    fig = us_primary_bar_dict[year_value]
+    fig = pc.us_primary_per_year(primary_energy_df, year_value)
     return fig
 
 @app.callback(
