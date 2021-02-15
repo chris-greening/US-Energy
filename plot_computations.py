@@ -1,5 +1,6 @@
 import datetime
 import json
+import pathlib
 import os
 
 import plotly.express as px
@@ -215,37 +216,45 @@ def us_primary_per_year(primary_df):
 
 def precompute_state_per_year(total_df):
 
-    # Prepare the datasets
-    primary_df = dp.load_primary_energy_sources(total_df)
-    primary_df = dp.data_subset(primary_df, states=[state for state in total_df["State"].unique(
-    ) if state != "United States"], sectors=["Total"])
-    primary_df["BTU"] = primary_df["BTU"]/1_000_000
-    primary_df = primary_df.rename(columns={"BTU": "Quadrillion BTU"})
+    # # Prepare the datasets
+    # primary_df = dp.load_primary_energy_sources(total_df)
+    # primary_df = dp.data_subset(primary_df, states=[state for state in total_df["State"].unique(
+    # ) if state != "United States"], sectors=["Total"])
+    # primary_df["BTU"] = primary_df["BTU"]/1_000_000
+    # primary_df = primary_df.rename(columns={"BTU": "Quadrillion BTU"})
 
-    per_cap_df = dp.data_subset(total_df, states=[state for state in total_df["State"].unique(
-    ) if state != "United States"], sources=["Total"], sectors=["Total consumption per capita"])
-    per_cap_df = per_cap_df.rename(columns={"BTU": "Million BTU"})
+    # per_cap_df = dp.data_subset(total_df, states=[state for state in total_df["State"].unique(
+    # ) if state != "United States"], sources=["Total"], sectors=["Total consumption per capita"])
+    # per_cap_df = per_cap_df.rename(columns={"BTU": "Million BTU"})
 
 
-    max_y = primary_df.groupby(["State", "Year"]).sum()["Quadrillion BTU"].max()
-    per_cap_max_y = per_cap_df.groupby(["State", "Year"]).sum()["Million BTU"].max()
-    max_y = max_y + max_y*.05
+    # max_y = primary_df.groupby(["State", "Year"]).sum()["Quadrillion BTU"].max()
+    # per_cap_max_y = per_cap_df.groupby(["State", "Year"]).sum()["Million BTU"].max()
+    # max_y = max_y + max_y*.05
 
-    # Create all possible combinations of plots
-    depiction_types = ["Energy consumption", "Energy consumption (per capita)"]
-    years = total_df["Year"].unique()
-    combinations = [[depiction, year]
-                    for depiction in depiction_types for year in years]
+    # # Create all possible combinations of plots
+    # depiction_types = ["Energy consumption", "Energy consumption (per capita)"]
+    # years = total_df["Year"].unique()
+    # combinations = [[depiction, year]
+    #                 for depiction in depiction_types for year in years]
 
+    # figs = {}
+    # for depiction, year in combinations:
+    #     if depiction == "Energy consumption":
+    #         year_df = primary_df[primary_df["Year"] == year]
+    #         fig = state_bar_plot(year_df, max_y)
+    #     else:
+    #         year_df = per_cap_df[per_cap_df["Year"] == year]
+    #         fig = state_per_cap_bar_plot(year_df, per_cap_max_y)
+    directory = os.path.abspath(os.path.join(os.path.join(
+            "data", "precomputed_plots"), "state_per_year"))
     figs = {}
-    for depiction, year in combinations:
-        if depiction == "Energy consumption":
-            year_df = primary_df[primary_df["Year"] == year]
-            fig = state_bar_plot(year_df, max_y)
-        else:
-            year_df = per_cap_df[per_cap_df["Year"] == year]
-            fig = state_per_cap_bar_plot(year_df, per_cap_max_y)
-        figs[depiction + str(year)] = fig
+    for fname in [os.path.join(directory, file) for file in os.listdir(directory)]:
+
+        with open(fname) as infile:
+            data = infile.read()
+        name = pathlib.Path(fname).stem
+        figs[name] = pio.from_json(data)
     return figs
 
 def state_bar_plot(primary_df, max_y):
