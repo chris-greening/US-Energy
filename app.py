@@ -198,7 +198,7 @@ def us_primary_bar_header(hoverData):
     Output('us-pie-header', 'children'),
     Input('us-total', 'hoverData')
 )
-def us_primary_bar_header(hoverData):
+def us_primary_pie_header(hoverData):
     year_value = int(hoverData['points'][0]['x'][:4])
     return f"Resource % ({year_value})"
 
