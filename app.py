@@ -21,6 +21,12 @@ import markdown
 
 DEBUG = False
 
+external_stylesheets = ['https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css']
+
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+
+server = app.server
+
 df = dp.load_dataset()
 primary_energy_df = dp.load_primary_energy_sources(df)
 with open(os.path.join("data", "united_states.geojson")) as infile:
@@ -32,12 +38,6 @@ us_primary_bar_dict = pc.us_primary_per_year(primary_energy_df)
 us_primary_pie_dict = pc.precompute_pie_plot_per_year(primary_energy_df)
 state_total_dict = pc.precompute_state_per_year(df)
 choropleth = pc.update_choropleth(df, united_states_geojson)
-
-external_stylesheets = ['https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css']
-
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-
-server = app.server
 
 app.layout = html.Div(children = [
     html.Div(
