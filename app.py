@@ -36,8 +36,7 @@ external_stylesheets = ['https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/boo
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-if not DEBUG:
-    server = app.server
+server = app.server
 
 app.layout = html.Div(children = [
     html.Div(
